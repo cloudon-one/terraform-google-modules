@@ -145,4 +145,44 @@ variable "proxy_source_ranges" {
   description = "List of CIDR blocks allowed to use the HTTPS proxy"
   type        = list(string)
   default     = []
+}
+
+variable "gke_subnet_cidr" {
+  description = "CIDR block for GKE subnet"
+  type        = string
+  default     = "10.160.0.0/16"
+}
+
+variable "data_subnet_cidr" {
+  description = "CIDR block for Data subnet"
+  type        = string
+  default     = "10.61.0.0/16"
+}
+
+variable "allowed_egress_destinations" {
+  description = "List of allowed egress destinations (CIDR blocks or domains)"
+  type        = list(string)
+  default = [
+    "10.0.0.0/8",              # RFC1918 private networks
+    "172.16.0.0/12",           # RFC1918 private networks
+    "192.168.0.0/16",          # RFC1918 private networks
+    "199.36.153.8/30",         # Google APIs restricted.googleapis.com
+    "199.36.153.4/30"          # Google APIs private.googleapis.com
+  ]
+  validation {
+    condition     = length(var.allowed_egress_destinations) > 0
+    error_message = "At least one egress destination must be specified for security."
+  }
+}
+
+variable "boot_disk_kms_key" {
+  description = "KMS key for boot disk encryption"
+  type        = string
+  default     = null
+}
+
+variable "enable_shielded_instance" {
+  description = "Enable shielded instance features for enhanced security"
+  type        = bool
+  default     = true
 } 

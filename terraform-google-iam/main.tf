@@ -120,13 +120,10 @@ locals {
 resource "google_project_iam_member" "bastion_host_project_roles" {
   for_each = var.enable_bastion_iam ? {
     for role in [
-      "roles/compute.loadBalancerAdmin",
-      "roles/compute.networkAdmin",
-      "roles/compute.securityAdmin",
-      "roles/compute.instanceAdmin",
+      "roles/compute.viewer",
+      "roles/compute.osLogin",
       "roles/logging.logWriter",
-      "roles/monitoring.metricWriter",
-      "roles/monitoring.viewer"
+      "roles/monitoring.metricWriter"
     ] : role => role
   } : {}
 
@@ -138,12 +135,9 @@ resource "google_project_iam_member" "bastion_host_project_roles" {
 resource "google_project_iam_member" "bastion_gke_project_roles" {
   for_each = var.enable_bastion_iam ? {
     for role in [
-      "roles/container.admin",
-      "roles/container.clusterAdmin",
+      "roles/container.clusterViewer",
       "roles/container.developer",
-      "roles/storage.admin",
-      "roles/storage.objectAdmin",
-      "roles/iam.serviceAccountUser"
+      "roles/storage.objectViewer"
     ] : role => role
   } : {}
 
@@ -155,13 +149,10 @@ resource "google_project_iam_member" "bastion_gke_project_roles" {
 resource "google_project_iam_member" "bastion_data_project_roles" {
   for_each = var.enable_bastion_iam ? {
     for role in [
-      "roles/cloudsql.admin",
       "roles/cloudsql.client",
       "roles/cloudsql.instanceUser",
-      "roles/redis.admin",
-      "roles/redis.editor",
-      "roles/storage.admin",
-      "roles/storage.objectAdmin"
+      "roles/redis.viewer",
+      "roles/storage.objectViewer"
     ] : role => role
   } : {}
 
@@ -173,9 +164,7 @@ resource "google_project_iam_member" "bastion_data_project_roles" {
 resource "google_folder_iam_member" "bastion_folder_roles" {
   for_each = var.enable_bastion_iam && var.folder_id != "" ? {
     for role in [
-      "roles/resourcemanager.folderViewer",
-      "roles/resourcemanager.projectIamAdmin",
-      "roles/resourcemanager.folderAdmin"
+      "roles/resourcemanager.folderViewer"
     ] : role => role
   } : {}
 

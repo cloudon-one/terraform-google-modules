@@ -7,7 +7,7 @@ resource "google_container_cluster" "primary" {
   network                     = var.network
   subnetwork                  = var.subnetwork
   description                 = "Managed by Terraform"
-  remove_default_node_pool    = false
+  remove_default_node_pool    = true
   initial_node_count          = 1
   enable_l4_ilb_subsetting    = true
   enable_intranode_visibility = var.enable_intranode_visibility

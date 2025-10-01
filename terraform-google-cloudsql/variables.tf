@@ -134,7 +134,28 @@ variable "database_flags" {
     name  = string
     value = string
   }))
-  default = []
+  default = [
+    {
+      name  = "cloudsql.iam_authentication"
+      value = "on"
+    },
+    {
+      name  = "log_connections"
+      value = "on"
+    },
+    {
+      name  = "log_disconnections"
+      value = "on"
+    },
+    {
+      name  = "log_checkpoints"
+      value = "on"
+    },
+    {
+      name  = "log_lock_waits"
+      value = "on"
+    }
+  ]
 }
 
 variable "insights_config" {
@@ -164,7 +185,7 @@ variable "databases" {
 }
 
 variable "users" {
-  description = "Map of users to create"
+  description = "Map of users to create. SECURITY NOTE: Passwords should be managed via Secret Manager or external systems, not in Terraform state"
   type = map(object({
     name     = string
     host     = optional(string)

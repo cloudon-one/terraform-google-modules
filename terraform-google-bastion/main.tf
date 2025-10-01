@@ -162,11 +162,21 @@ resource "google_compute_instance" "bastion" {
   tags = ["bastion-host"]
 
   boot_disk {
-    auto_delete = false
+    auto_delete       = false
+    kms_key_self_link = var.boot_disk_kms_key
     initialize_params {
       image = var.boot_image
       size  = var.boot_disk_size_gb
       type  = var.boot_disk_type
+    }
+  }
+
+  dynamic "shielded_instance_config" {
+    for_each = var.enable_shielded_instance ? [1] : []
+    content {
+      enable_secure_boot          = true
+      enable_vtpm                 = true
+      enable_integrity_monitoring = true
     }
   }
 
@@ -287,7 +297,7 @@ resource "google_compute_firewall" "bastion_forward_gke_to_data" {
   }
 
   source_tags        = ["bastion-host"]
-  destination_ranges = ["10.61.0.0/16"]
+  destination_ranges = [var.data_subnet_cidr]
 
   description = "Allow bastion to forward traffic from GKE to Data VPC"
 
@@ -307,7 +317,7 @@ resource "google_compute_firewall" "bastion_forward_data_to_gke" {
   }
 
   source_tags        = ["bastion-host"]
-  destination_ranges = ["10.60.0.0/16"]
+  destination_ranges = [var.gke_subnet_cidr]
 
   description = "Allow bastion to forward traffic from Data to GKE VPC"
 
@@ -325,7 +335,7 @@ resource "google_compute_firewall" "bastion_internal_gke" {
     protocol = "all"
   }
 
-  source_ranges = ["10.60.0.0/16"]
+  source_ranges = [var.gke_subnet_cidr]
   target_tags   = ["bastion-host"]
 
   description = "Allow internal traffic from GKE subnet to bastion"
@@ -345,7 +355,7 @@ resource "google_compute_firewall" "bastion_internal_data" {
     protocol = "all"
   }
 
-  source_ranges = ["10.61.0.0/16"]
+  source_ranges = [var.data_subnet_cidr]
   target_tags   = ["bastion-host"]
 
   description = "Allow internal traffic from Data subnet to bastion"
@@ -366,9 +376,9 @@ resource "google_compute_firewall" "bastion_egress_gke" {
   }
 
   target_tags        = ["bastion-host"]
-  destination_ranges = ["0.0.0.0/0"]
+  destination_ranges = var.allowed_egress_destinations
 
-  description = "Allow all egress traffic from bastion host on GKE VPC"
+  description = "Allow egress traffic from bastion to approved destinations on GKE VPC"
 
   log_config {
     metadata = "INCLUDE_ALL_METADATA"
@@ -387,9 +397,9 @@ resource "google_compute_firewall" "bastion_egress_data" {
   }
 
   target_tags        = ["bastion-host"]
-  destination_ranges = ["0.0.0.0/0"]
+  destination_ranges = var.allowed_egress_destinations
 
-  description = "Allow all egress traffic from bastion host on Data VPC"
+  description = "Allow egress traffic from bastion to approved destinations on Data VPC"
 
   log_config {
     metadata = "INCLUDE_ALL_METADATA"

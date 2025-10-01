@@ -125,6 +125,10 @@ resource "google_access_context_manager_service_perimeter" "main_perimeter" {
 
     restricted_services = var.restricted_services
 
+    # WARNING: This ingress policy grants broad access to DevOps team
+    # SECURITY RECOMMENDATION: Restrict to specific resources and operations
+    # Example: Replace resources = ["*"] with specific project numbers
+    # Replace service_name = "*" with required services only (e.g., "compute.googleapis.com")
     dynamic "ingress_policies" {
       for_each = length(var.devops_team_members) > 0 ? [1] : []
       content {
@@ -135,27 +139,30 @@ resource "google_access_context_manager_service_perimeter" "main_perimeter" {
           }
         }
         ingress_to {
-          resources = ["*"]
+          resources = ["*"]  # TODO: Replace with specific project numbers
           operations {
-            service_name = "*"
+            service_name = "*"  # TODO: Restrict to required services
             method_selectors {
-              method = "*"
+              method = "*"  # TODO: Restrict to required methods
             }
           }
         }
       }
     }
 
+    # WARNING: This egress policy allows unrestricted outbound access
+    # SECURITY RECOMMENDATION: Restrict to specific external resources and services
+    # Consider implementing allowlisted destinations for data exfiltration prevention
     egress_policies {
       egress_from {
         identity_type = "ANY_IDENTITY"
       }
       egress_to {
-        resources = ["*"]
+        resources = ["*"]  # TODO: Restrict to approved external resources
         operations {
-          service_name = "*"
+          service_name = "*"  # TODO: Restrict to required external services
           method_selectors {
-            method = "*"
+            method = "*"  # TODO: Restrict to required methods
           }
         }
       }

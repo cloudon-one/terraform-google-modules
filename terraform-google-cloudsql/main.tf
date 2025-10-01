@@ -119,6 +119,10 @@ resource "google_sql_user" "users" {
   project  = var.project_id
   host     = contains(["MYSQL_5_6", "MYSQL_5_7", "MYSQL_8_0"], var.database_version) ? lookup(each.value, "host", "%") : null
   password = lookup(each.value, "password", null)
+
+  lifecycle {
+    ignore_changes = [password]
+  }
 }
 
 resource "google_sql_ssl_cert" "client_cert" {
