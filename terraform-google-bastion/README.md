@@ -39,13 +39,13 @@ module "bastion" {
   }
   
   enable_iap_tunnel = true
-  iap_user         = "admin@fintech.com"
+  iap_user         = "admin@example.com"
   
   # Optional: Enable OS Login for IAM-based SSH access
   enable_os_login = true
   os_login_users = [
-    "user:admin@fintech.com",
-    "user:dev@fintech.com",
+    "user:admin@example.com",
+    "user:dev@example.com",
   ]
   
   # Optional: Enable an HTTPS proxy on the bastion
@@ -60,7 +60,7 @@ module "bastion" {
   enable_nat = true
   router_name = "bastion-router"
   
-  name_prefix = "fintech"
+  name_prefix = "example"
 }
 ```
 
@@ -182,7 +182,7 @@ gcloud compute ssh fintech-bastion --zone=us-central1-a --project=host-project
 ### 2. IAP Tunnel (recommended)
 ```bash
 # Start IAP tunnel
-gcloud compute start-iap-tunnel fintech-bastion 22 --local-host-port=localhost:2222 --zone=us-central1-a --project=host-project
+gcloud compute start-iap-tunnel bastion-host 22 --local-host-port=localhost:2222 --zone=us-central1-a --project=host-project
 
 # Connect via tunnel
 ssh -p 2222 user@localhost
