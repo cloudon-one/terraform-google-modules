@@ -278,8 +278,8 @@ module "custom_projects" {
   
   labels = {
     environment = "production"
-    team        = "fintech-devops"
-    cost_center = "fintech-devops"
+    team        = "devops"
+    cost_center = "devops"
   }
 }
 ```
