@@ -35,7 +35,7 @@ module "cloudsql_instance" {
   # Network Configuration
   ip_configuration = {
     ipv4_enabled    = false
-    private_network = "projects/host-project-8hhr/global/networks/data-vpc"
+    private_network = "projects/host-project/global/networks/data-vpc"
     require_ssl     = true
     authorized_networks = [
       {
@@ -80,12 +80,12 @@ module "cloudsql_instance" {
   # Databases
   databases = {
     app_db = {
-      name      = "fintech_app"
+      name      = "example_app"
       charset   = "utf8mb4"
       collation = "utf8mb4_unicode_ci"
     }
     analytics_db = {
-      name      = "fintech_analytics"
+      name      = "example_analytics"
       charset   = "utf8mb4"
       collation = "utf8mb4_unicode_ci"
     }
