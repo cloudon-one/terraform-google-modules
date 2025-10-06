@@ -35,13 +35,13 @@ module "iam" {
   }
 
   os_login_users = [
-    "user:user1@fintech.com",
-    "user:user2@fintech.com"
+    "user:user1@example.com",
+    "user:user2@example.com"
   ]
 
   iap_tunnel_users = [
-    "user:user1@fintech.com",
-    "user:user2@fintech.com"
+    "user:user1@example.com",
+    "user:user2@example.com"
   ]
 }
 ```
